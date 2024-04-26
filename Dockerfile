@@ -1,6 +1,11 @@
-FROM node:20.11.0-alpine
+FROM node:20.12.2
 
-RUN apk add --no-cache bash
+RUN set -eux ; \
+  apt-get update ; apt-get upgrade -y
+
+RUN set -eux ; \
+  apt-get update ; apt-get install -y \
+  wget
 
 WORKDIR /app
 

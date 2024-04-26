@@ -39,7 +39,12 @@ app.post('/run/script2msd', upload.single('file'), async (req, res) => {
 
     try {
         await processScript(file, fileOutJson, false);
-        await runRobot('host.docker.internal', 3000, fileOutJson, fileOutMsd, false)
+        await runRobot(
+          process.env.CONTROL_SERVER_MMS_HOST || 'host.docker.internal',
+          process.env.CONTROL_SERVER_MMS_PORT || 3000,
+          fileOutJson,
+          fileOutMsd,
+          false)
 
         res.sendFile(fileOutMsd);
     } catch (error) {

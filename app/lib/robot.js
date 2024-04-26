@@ -72,46 +72,45 @@ async function runRobot(hostname, port, inputFile, output, isWin10=false) {
 
 
         if (scene?.set?.type?.length > 1)  { // INT/EXT
-            await client.sendMultipleKeys(['down', 'down', 'down'])
+            await client.sendMultipleKeys(['down', 'down', 'down', 'tab'])
         } else if (scene?.set?.type[0]?.toUpperCase() == 'INT') {
-            await client.keyTap('down');
+            await client.sendMultipleKeys(['down', 'tab'])
         } else if (scene?.set?.type[0]?.toUpperCase() == 'EXT') {
-            await client.sendMultipleKeys(['down', 'down'])
+            await client.sendMultipleKeys(['down', 'down', 'tab'])
         }
-
-        await client.keyTap('tab');
 
         await client.writeTextTab(scene.location.toUpperCase())
 
         switch (scene?.time?.toUpperCase()) {
             case 'DAY':
-                await client.keyTap('down');
+                await client.sendMultipleKeys(['down', 'tab'])
                 break;
 
             case 'NIGHT':
-                await client.sendMultipleKeys(['down', 'down'])
+                await client.sendMultipleKeys(['down', 'down', 'tab'])
                 break;
 
             case 'MORNING':
-                await client.sendMultipleKeys(['down', 'down', 'down'])
+                await client.sendMultipleKeys(['down', 'down', 'down', 'tab'])
                 break;
 
             case 'EVENING':
-                await client.sendMultipleKeys(['down', 'down', 'down', 'down'])
+                await client.sendMultipleKeys(['down', 'down', 'down', 'down', 'tab'])
                 break;
 
             default:
                 break;
         }
 
-        await client.sendMultipleKeys(['tab', 'tab', 'tab'])
-
+        await client.writeTextTab(scene.pages)
+        await client.writeTextTab(scene.eights)
 
         // row 2
         await client.writeTextTab(scene.synopsis)
 
         // row 3
-        await client.keyTap('tab')
+        await client.writeTextTab(`${scene.page_number}${(scene.pages - 1) > 0 ?  '-' + (Number(scene.page_number) + Number(scene.pages)) : ''}`)
+
 
         if (scene?.time?.toUpperCase() == 'NIGHT') {
             await client.writeTextTab('N' + scene.current_day)
@@ -125,7 +124,7 @@ async function runRobot(hostname, port, inputFile, output, isWin10=false) {
         await client.writeTextTab(scene.location.toUpperCase())
 
         // Elements
-        for (const [index, element] of elementFields.entries()) {
+        for (const element of elementFields) {
             const targetElement  = scene?.elements[element];
 
             if (typeof targetElement === "undefined" || targetElement.length <= 0) {
