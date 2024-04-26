@@ -109,7 +109,7 @@ async function runRobot(hostname, port, inputFile, output, isWin10=false) {
         await client.writeTextTab(scene.synopsis)
 
         // row 3
-        await client.writeTextTab(`${scene.page_number}${(scene.pages - 1) > 0 ?  '-' + (Number(scene.page_number) + Number(scene.pages)) : ''}`)
+        await client.writeTextTab(`${scene.page_number}${(scene.pages - 1) > 0 ?  '-' + (Number(scene.page_number) + Number(scene.pages) -1 ) : ''}`)
 
 
         if (scene?.time?.toUpperCase() == 'NIGHT') {
