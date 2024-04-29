@@ -6,7 +6,7 @@ import multer from 'multer';
 import { deleteFile } from './lib/utils.js'
 import { processScript } from './lib/process.js';
 import { runRobot } from './lib/robot.js';
-
+import { pdf2Txt } from './lib/pdf2txt.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -38,6 +38,9 @@ app.post('/run/script2msd', upload.single('file'), async (req, res) => {
     const fileOutMsd = req.file.path + '_out.msd';
 
     try {
+        if (req.body.convertPdf) {
+          await pdf2Txt(file, file)
+        }
         await processScript(file, fileOutJson, false);
         await runRobot(
           process.env.CONTROL_SERVER_MMS_HOST || 'host.docker.internal',
