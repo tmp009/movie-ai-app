@@ -31,7 +31,7 @@ const elementFields = [
 
 
 async function runRobot(hostname, port, inputFile, output, isWin10=false) {
-    const client = new RobotClient(hostname,port);
+    const client = new RobotClient(hostname,port, 'robot', process.env.ROBOT_PASSWORD || '');
 
     let elementBox;
     let parentWindow;

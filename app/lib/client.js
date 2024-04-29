@@ -1,10 +1,12 @@
 module.exports = class RobotClient {
-    constructor(url, port) {
+    constructor(url, port, username='robot', password='') {
         if (!url.startsWith('http://') && !url.startsWith('https://')) {
             url = 'http://' + url;
         }
         this.host = url + ':' + port;
         this.retries = 5;
+        this.username = username;
+        this.password = password;
     }
 
     async post(route, body, delay=0) {
@@ -13,7 +15,8 @@ module.exports = class RobotClient {
                 const resp = await fetch(this.host+route, {
                     method:"POST",
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Basic ${Buffer.from(this.username + ':' + this.password).toString('base64')}`
                     },
                     body: JSON.stringify(body)
                 })
@@ -41,7 +44,8 @@ module.exports = class RobotClient {
         const resp = await fetch(this.host+route, {
             method:"GET",
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Basic ${Buffer.from(this.username + ':' + this.password).toString('base64')}`
             }
         })
 
