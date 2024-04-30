@@ -59,10 +59,15 @@ app.post('/run/script2msd', upload.single('file'), async (req, res) => {
         )
 
         if (email) {
-          await sendMail(email, '[DONE] Movie AI Script2Msd', 'Here is your processed msd file', [{
+          await sendMail(email, '[DONE] Movie AI Script2Msd', 'Here is your processed msd & json file', [
+            {
                 filename: 'processed.msd',
                 content: await fs.readFile(fileOutMsd)
-              }])
+            },
+            {
+              filename: 'processed.json',
+              content: await fs.readFile(fileOutJson)
+            }])
         }
 
         res.sendFile(fileOutMsd);
