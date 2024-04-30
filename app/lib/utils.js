@@ -13,4 +13,4 @@ async function deleteFile(filePath) {
     }
 }
 
-  module.exports = { deleteFile }
+module.exports = { deleteFile }

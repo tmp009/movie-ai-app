@@ -3,10 +3,12 @@ import path from 'path';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import multer from 'multer';
+import fs from 'fs/promises'
 import { deleteFile } from './lib/utils.js'
 import { processScript } from './lib/process.js';
 import { runRobot } from './lib/robot.js';
 import { pdf2Txt } from './lib/pdf2txt.js';
+import { sendMail } from './lib/email.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -33,6 +35,12 @@ app.post('/run/script2msd', upload.single('file'), async (req, res) => {
         return res.status(400).json({error: 'No files were uploaded.'});
     }
 
+    const email = req.body.email;
+
+    if (email) {
+      sendMail(email, 'Movie AI Script2Msd', 'Hello,\n\nYour movie script is being processed. You will receive an email once it\'s done.\n\nPlease do not reply. This is an automated email.')
+    }
+
     const file = req.file.path;
     const fileOutJson = req.file.path + '_out.json';
     const fileOutMsd = req.file.path + '_out.msd';
@@ -47,7 +55,15 @@ app.post('/run/script2msd', upload.single('file'), async (req, res) => {
           process.env.CONTROL_SERVER_MMS_PORT || 3000,
           fileOutJson,
           fileOutMsd,
-          false)
+          false
+        )
+
+        if (email) {
+          await sendMail(email, '[DONE] Movie AI Script2Msd', 'Here is your processed msd file', [{
+                filename: 'processed.msd',
+                content: await fs.readFile(fileOutMsd)
+              }])
+        }
 
         res.sendFile(fileOutMsd);
     } catch (error) {
